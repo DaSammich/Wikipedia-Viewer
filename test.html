@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Wiki Viewer</title>
+
+	<script
+	  src="https://code.jquery.com/jquery-3.2.1.min.js"
+	  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+	  crossorigin="anonymous">
+	</script>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+
+
+	<script type="text/javascript">
+
+	function random() {
+		window.open('https://en.wikipedia.org/wiki/Special:Random', '_blank', 'toolbar=0,location=0,menubar=0');
+	}
+
+	function callWiki(search) {
+		$.getJSON("https://en.wikipedia.org/w/api.php?action=opensearch&format=json&limit=10&origin=*&search="+search, function(data){
+				console.log(data)
+				results = $("#results")
+				results.text("")
+				for (var i = 1; i < data[1].length; i++) {
+					found = "<div class='entry_title'>"+data[1][i]+"</div>"+"<p>"+data[2][i]+"</p>"
+					results.append("<div class='entry grow'>" + found + "</div>")
+				}
+		}, function() {
+			alert('done')
+		})		
+	}
+
+	$(document).ready(function() {
+		$("#search").click(function() {
+			search = $("#input").val()
+			callWiki(search)
+		})
+		$("#input").on("keyup", function(e) {
+			if (e.keyCode == '13') {
+				search = $("#input").val()
+				callWiki(search)
+			}
+		})
+	})
+	</script>
+
+</head>
+<body class="container">
+	<div class="title" align="center">Wiki Quick Search</div>
+	<div id="user" class="wrapper" align="center">
+		<input id="input" type="text" val="2" value="test">
+		<button id="search">search</button>
+		<button onclick="random()">Random Article!</button>
+	</div>
+	<div id="results">
+		
+	</div>
+</body>
+</html>
