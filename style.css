@@ -45,3 +45,8 @@
 .grow:hover {
 	transform: scale(1.033);
 }
+
+#results	 {
+	-webkit-animation-duration: .25s;
+}
+

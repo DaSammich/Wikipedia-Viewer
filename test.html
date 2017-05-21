@@ -26,22 +26,61 @@
 	<script type="text/javascript">
 
 	// keeps track of the links
-	hash = {}
+	hash = []
+	init = false
 
 	function random() {
 		window.open('https://en.wikipedia.org/wiki/Special:Random', '_blank', 'toolbar=0,location=0,menubar=0');
 	}
 
 	function callWiki(search) {
+
+		if (hash.length != 0) {
+			// sliding out
+			animation = "animated slideOutDown"
+			$("#results").addClass(animation).one("webkitAnimationEnd mozAnimationEnd msAnimationEnd oAnimationEnd animationEnd", function() {
+				// sliding in
+				$(this).removeClass(animation)
+				animation = "animated slideInUp"
+				$("#results").addClass(animation).one("webkitAnimationEnd mozAnimationEnd msAnimationEnd oAnimationEnd animationEnd", function() {
+					$(this).removeClass(animation)
+				})
+			})
+		}
+
 		$.getJSON("https://en.wikipedia.org/w/api.php?action=opensearch&format=json&limit=10&origin=*&search="+search, function(data) {
+
 				console.log(data)
-				results = $("#results")
-				results.text("")
-				for (var i = 1; i < data[1].length; i++) {
-					found = "<div class='entry_title' id="+i+">"+data[1][i]+"</div>"+"<p id="+i+">"+data[2][i]+"</p>"
-					results.append("<div class='entry grow' id="+i+">" + found + "</div>")
-					hash[i] = data[3][i]
-				}
+
+				// results = $("#results")
+				// results.text("")
+				// for (var i = 1; i < data[1].length; i++) {
+				// 	found = "<div class='entry_title' id="+i+">"+data[1][i]+"</div>"+"<p id="+i+">"+data[2][i]+"</p>"
+				// 	results.append("<div class='entry grow' id="+i+">" + found + "</div>")
+				// 	hash[i] = data[3][i]
+				// }
+
+		}).then(function(data) {
+
+			// append data to results tag
+			results = $("#results")
+			results.text("")
+			for (var i = 1; i < data[1].length; i++) {
+				found = "<div class='entry_title' id="+i+">"+data[1][i]+"</div>"+"<p id="+i+">"+data[2][i]+"</p>"
+				results.append("<div class='entry grow' id="+i+">" + found + "</div>")
+				hash[i] = data[3][i]
+			}
+
+		}).done(function() {
+
+			// first time slide in
+			if (!init) {
+				animation = "animated slideInUp"
+				$("#results").addClass(animation).one("webkitAnimationEnd mozAnimationEnd msAnimationEnd oAnimationEnd animationEnd", function() {
+					$(this).removeClass(animation)
+				})
+				init = true
+			}
 		})		
 	}
 
