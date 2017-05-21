@@ -25,21 +25,23 @@
 
 	<script type="text/javascript">
 
+	// keeps track of the links
+	hash = {}
+
 	function random() {
 		window.open('https://en.wikipedia.org/wiki/Special:Random', '_blank', 'toolbar=0,location=0,menubar=0');
 	}
 
 	function callWiki(search) {
-		$.getJSON("https://en.wikipedia.org/w/api.php?action=opensearch&format=json&limit=10&origin=*&search="+search, function(data){
+		$.getJSON("https://en.wikipedia.org/w/api.php?action=opensearch&format=json&limit=10&origin=*&search="+search, function(data) {
 				console.log(data)
 				results = $("#results")
 				results.text("")
 				for (var i = 1; i < data[1].length; i++) {
-					found = "<div class='entry_title'>"+data[1][i]+"</div>"+"<p>"+data[2][i]+"</p>"
-					results.append("<div class='entry grow'>" + found + "</div>")
+					found = "<div class='entry_title' id="+i+">"+data[1][i]+"</div>"+"<p id="+i+">"+data[2][i]+"</p>"
+					results.append("<div class='entry grow' id="+i+">" + found + "</div>")
+					hash[i] = data[3][i]
 				}
-		}, function() {
-			alert('done')
 		})		
 	}
 
@@ -53,6 +55,11 @@
 				search = $("#input").val()
 				callWiki(search)
 			}
+		})
+		$("#results").on("click", ".entry", function(e) {
+			console.log(e.target.id)
+			link = hash[e.target.id]
+			window.open(link, '_blank', 'toolbar=0,location=0,menubar=0');
 		})
 	})
 	</script>
